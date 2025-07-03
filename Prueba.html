@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Motor Bluetooth</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            touch-action: manipulation; /* Evita zoom al doble tap en moviles */
+        }
+        .btn-custom {
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+        }
+        .btn-custom:active {
+            transform: scale(0.95);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-md mx-auto"> <!-- Contenedor principal -->
+
+        <!-- Encabezado con el logo -->
+        <header class="mb-6 text-center">
+            <img src="https://placehold.co/240x80/ffffff/000000?text=Mi+Vida+Loca&font=satisfy" 
+                 alt="Logo Mi Vida Loca"
+                 onerror="this.onerror=null;this.src='https://placehold.co/240x80/cccccc/333333?text=Logo+No+Disponible';"
+                 class="mx-auto rounded-lg inline-block bg-white">
+        </header>
+        
+        <!-- Panel de control de la aplicacion -->
+        <main class="bg-gray-800 rounded-2xl shadow-lg p-6 md:p-8 space-y-6">
+            <div class="text-center">
+                <h1 class="text-3xl font-bold text-cyan-400">Control de Motor</h1>
+                <p class="text-gray-400 mt-2">Conexión vía Web Bluetooth</p>
+            </div>
+
+            <div id="status-container" class="bg-gray-700 p-4 rounded-lg text-center">
+                <p id="status" class="text-gray-300">Esperando conexión...</p>
+            </div>
+
+            <div id="connect-container">
+                <button id="connect-button" class="w-full bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-3 px-4 rounded-lg text-lg btn-custom shadow-md">
+                    Conectar a ESP32
+                </button>
+            </div>
+            
+            <div id="controls-container" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button id="start-button" class="bg-green-500 hover:bg-green-600 text-white font-bold py-8 rounded-lg text-2xl btn-custom shadow-lg">
+                    MARCHA
+                </button>
+                <button id="stop-button" class="bg-red-600 hover:bg-red-700 text-white font-bold py-8 rounded-lg text-2xl btn-custom shadow-lg">
+                    PARO
+                </button>
+            </div>
+        </main>
+
+    </div>
+
+    <script>
+        const connectButton = document.getElementById('connect-button');
+        const startButton = document.getElementById('start-button');
+        const stopButton = document.getElementById('stop-button');
+        const statusDisplay = document.getElementById('status');
+        const controlsContainer = document.getElementById('controls-container');
+        const connectContainer = document.getElementById('connect-container');
+
+        let bluetoothDevice;
+        let serialCharacteristic;
+        const encoder = new TextEncoder();
+
+        // Al hacer clic en el boton de conectar
+        connectButton.addEventListener('click', async () => {
+            try {
+                statusDisplay.textContent = 'Buscando dispositivos...';
+                // *** CAMBIO IMPORTANTE: Ahora buscamos por el nombre exacto definido en el ESP32 ***
+                bluetoothDevice = await navigator.bluetooth.requestDevice({
+                    filters: [{ name: 'ControlMotorESP32' }],
+                    optionalServices: ['00001101-0000-1000-8000-00805f9b34fb'] // UUID estandar para SPP
+                });
+
+                statusDisplay.textContent = `Conectando a ${bluetoothDevice.name}...`;
+                const server = await bluetoothDevice.gatt.connect();
+                
+                statusDisplay.textContent = 'Obteniendo servicio...';
+                const service = await server.getPrimaryService('00001101-0000-1000-8000-00805f9b34fb');
+                
+                statusDisplay.textContent = 'Obteniendo característica...';
+                serialCharacteristic = await service.getCharacteristic('00001101-0000-1000-8000-00805f9b34fb');
+                
+                statusDisplay.textContent = `Conectado a ${bluetoothDevice.name}`;
+                connectContainer.classList.add('hidden');
+                controlsContainer.classList.remove('hidden');
+
+                // Escuchar desconexiones
+                bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
+
+            } catch (error) {
+                console.error('Error al conectar:', error);
+                statusDisplay.textContent = `Error: ${error.message}`;
+            }
+        });
+
+        // Funcion para enviar datos
+        async function sendCommand(command) {
+            if (!serialCharacteristic) {
+                statusDisplay.textContent = 'No conectado. Por favor, conecta primero.';
+                return;
+            }
+            try {
+                await serialCharacteristic.writeValue(encoder.encode(command));
+                console.log(`Comando enviado: ${command}`);
+            } catch (error) {
+                console.error('Error al enviar comando:', error);
+                statusDisplay.textContent = `Error de envío: ${error.message}`;
+            }
+        }
+
+        // Event listeners para los botones de control
+        startButton.addEventListener('click', () => {
+            sendCommand('1');
+            statusDisplay.textContent = 'Comando MARCHA enviado.';
+        });
+
+        stopButton.addEventListener('click', () => {
+            sendCommand('0');
+            statusDisplay.textContent = 'Comando PARO enviado.';
+        });
+
+        function onDisconnected() {
+            statusDisplay.textContent = 'Dispositivo desconectado.';
+            connectContainer.classList.remove('hidden');
+            controlsContainer.classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
