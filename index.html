@@ -1,38 +1,64 @@
-<!DOCTYPE html>
+
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control de Bombilla Bluetooth</title>
+    <title>El Poder del Círculo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
         }
-        .light-off {
+
+        /* --- Estilos para el icono de engranaje --- */
+        
+        /* Definición de la animación de rotación */
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Estado "apagado": color gris, sin animación */
+        .state-off {
             color: #4a5568; /* gray-600 */
         }
-        .light-on {
-            color: #f6e05e; /* yellow-300 */
-            filter: drop-shadow(0 0 10px #f6e05e);
+
+        /* Estado "encendido": color turquesa, con brillo y animación de rotación infinita */
+        .state-on {
+            color: #2dd4bf; /* teal-400 */
+            filter: drop-shadow(0 0 8px #2dd4bf);
+            animation: spin 4s linear infinite;
         }
-        .btn-disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
+
     </style>
 </head>
-<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen">
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen p-4">
 
     <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-sm text-center border border-gray-700">
-        <h1 class="text-3xl font-bold mb-4">Control de Bombilla</h1>
+        
+        <!-- Logotipo Personalizable (Más grande y con fondo) -->
+        <div class="mb-4 inline-block bg-gray-700 p-2 rounded-full">
+            <img 
+                id="logo" 
+                src="https://github.com/ramiropue/mi-vida-loca/blob/main/images%20-%20Editada.png?raw=true" 
+                alt="Logotipo El Poder del Círculo" 
+                class="w-32 h-32 mx-auto rounded-full object-cover border-2 border-blue-500"
+                onerror="this.onerror=null; this.src='https://placehold.co/128x128/3b82f6/ffffff?text=Error';"
+            >
+        </div>
+
+        <h1 class="text-3xl font-bold mb-2">El Poder del Círculo</h1>
         <p class="text-gray-400 mb-6" id="status">Estado: Desconectado</p>
 
-        <!-- Lightbulb Icon -->
+        <!-- Icono de Engranajes -->
         <div class="my-8">
-            <svg id="lightbulb-icon" class="w-24 h-24 mx-auto transition-colors duration-300 light-off" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M2 6a6 6 0 1 1 12 0 6 6 0 0 1-12 0zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 1 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 0a.5.5 0 0 1-.707.707l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707z"/>
+            <svg id="gear-icon" class="w-24 h-24 mx-auto transition-colors duration-300 state-off" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+              <path fill-rule="evenodd" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.542L9.05 5.85c-.09.44-.344.84-.69 1.14L6.46 8.74c-.534.433-1.28.324-1.636-.243L2.92 5.555c-.356-.568-.97-.834-1.636-.633A1.875 1.875 0 000 6.75v10.5c0 .64.364 1.21.928 1.524.564.312 1.28.102 1.636-.46l1.904-3.046c.356-.568 1.102-.677 1.636-.244l1.9 1.75c.346.3.6.7.69 1.14l.178 2.058c.15.88.932 1.542 1.85 1.542h1.844c.917 0 1.699-.663 1.85-1.542l.178-2.058c.09-.44.344-.84.69-1.14l1.9-1.75c.534-.433 1.28-.324 1.636.244l1.904 3.046c.356.568.97.834 1.636.633a1.875 1.875 0 001.636-1.524V6.75a1.875 1.875 0 00-.928-1.524c-.564-.312-1.28-.102-1.636.46l-1.904 3.046c-.356-.568-1.102-.677-1.636.244l-1.9-1.75c-.346-.3-.6-.7-.69-1.14l-.178-2.058A1.875 1.875 0 0012.922 2.25h-1.844zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" clip-rule="evenodd" />
             </svg>
         </div>
 
@@ -58,11 +84,10 @@
         const onButton = document.getElementById('on-button');
         const offButton = document.getElementById('off-button');
         const statusDisplay = document.getElementById('status');
-        const lightbulbIcon = document.getElementById('lightbulb-icon');
+        const gearIcon = document.getElementById('gear-icon'); // Actualizado
         const controlsDiv = document.getElementById('controls');
 
         // --- UUIDs del servicio y característica BLE ---
-        // Deben coincidir exactamente con los del código del ESP32
         const SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
         const CHARACTERISTIC_UUID = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
 
@@ -73,7 +98,6 @@
             try {
                 statusDisplay.textContent = 'Buscando dispositivos...';
                 
-                // Solicitar dispositivo BLE que anuncie el servicio especificado
                 const device = await navigator.bluetooth.requestDevice({
                     filters: [{ services: [SERVICE_UUID] }]
                 });
@@ -91,7 +115,6 @@
                 connectButton.classList.add('hidden');
                 controlsDiv.classList.remove('hidden');
 
-                // Escuchar desconexiones
                 device.addEventListener('gattserverdisconnected', onDisconnected);
 
             } catch (error) {
@@ -110,18 +133,17 @@
                 return;
             }
             try {
-                // El comando es un solo byte (0 o 1)
                 const value = Uint8Array.of(command);
                 await bleCharacteristic.writeValue(value);
                 console.log(`Comando enviado: ${command}`);
 
-                // Actualizar el icono de la bombilla
+                // Actualizar clases del icono de engranaje
                 if (command === 1) {
-                    lightbulbIcon.classList.remove('light-off');
-                    lightbulbIcon.classList.add('light-on');
+                    gearIcon.classList.remove('state-off');
+                    gearIcon.classList.add('state-on');
                 } else {
-                    lightbulbIcon.classList.remove('light-on');
-                    lightbulbIcon.classList.add('light-off');
+                    gearIcon.classList.remove('state-on');
+                    gearIcon.classList.add('state-off');
                 }
             } catch (error) {
                 console.error('Error al enviar el comando:', error);
@@ -135,8 +157,9 @@
             bleCharacteristic = null;
             connectButton.classList.remove('hidden');
             controlsDiv.classList.add('hidden');
-            lightbulbIcon.classList.remove('light-on');
-            lightbulbIcon.classList.add('light-off');
+            // Resetear el estado del icono
+            gearIcon.classList.remove('state-on');
+            gearIcon.classList.add('state-off');
         }
 
     </script>
