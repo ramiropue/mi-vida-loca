@@ -9,11 +9,25 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            position: relative; /* Necesario para el pseudo-elemento del fondo */
+        }
+
+        /* Capa de fondo con flores y transparencia */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://www.toptal.com/designers/subtlepatterns/uploads/flowers.png');
+            background-repeat: repeat;
+            opacity: 0.15; /* Aumentada la opacidad para que se vea más */
+            z-index: -1; /* Coloca el fondo detrás de todo el contenido */
         }
 
         /* --- Estilos para el icono de engranaje --- */
         
-        /* Definición de la animación de rotación */
         @keyframes spin {
             from {
                 transform: rotate(0deg);
@@ -23,12 +37,10 @@
             }
         }
 
-        /* Estado "apagado": color gris, sin animación */
         .state-off {
             color: #4a5568; /* gray-600 */
         }
 
-        /* Estado "encendido": color turquesa, con brillo y animación de rotación infinita */
         .state-on {
             color: #2dd4bf; /* teal-400 */
             filter: drop-shadow(0 0 8px #2dd4bf);
@@ -39,16 +51,16 @@
 </head>
 <body class="bg-gray-900 text-white flex items-center justify-center min-h-screen p-4">
 
-    <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-sm text-center border border-gray-700">
+    <div class="bg-gray-800 bg-opacity-95 p-8 rounded-2xl shadow-2xl w-full max-w-sm text-center border border-gray-700">
         
-        <!-- Logotipo Personalizable (Más grande y con fondo) -->
-        <div class="mb-4 inline-block bg-gray-700 p-2 rounded-full">
+        <!-- Logotipo Personalizable (Rectangular) -->
+        <div class="mb-4 inline-block bg-gray-700 p-2 rounded-xl">
             <img 
                 id="logo" 
-                src="https://github.com/ramiropue/mi-vida-loca/blob/main/images%20-%20Editada.png?raw=true" 
+                src="https://github.com/ramiropue/mi-vida-loca/blob/main/mividaloca%20LOGO.jpg?raw=true" 
                 alt="Logotipo El Poder del Círculo" 
-                class="w-32 h-32 mx-auto rounded-full object-cover border-2 border-blue-500"
-                onerror="this.onerror=null; this.src='https://placehold.co/128x128/3b82f6/ffffff?text=Error';"
+                class="w-48 h-auto rounded-lg"
+                onerror="this.onerror=null; this.src='https://placehold.co/192x108/3b82f6/ffffff?text=Error';"
             >
         </div>
 
@@ -58,7 +70,7 @@
         <!-- Icono de Engranajes -->
         <div class="my-8">
             <svg id="gear-icon" class="w-24 h-24 mx-auto transition-colors duration-300 state-off" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-              <path fill-rule="evenodd" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.542L9.05 5.85c-.09.44-.344.84-.69 1.14L6.46 8.74c-.534.433-1.28.324-1.636-.243L2.92 5.555c-.356-.568-.97-.834-1.636-.633A1.875 1.875 0 000 6.75v10.5c0 .64.364 1.21.928 1.524.564.312 1.28.102 1.636-.46l1.904-3.046c.356-.568 1.102-.677 1.636-.244l1.9 1.75c.346.3.6.7.69 1.14l.178 2.058c.15.88.932 1.542 1.85 1.542h1.844c.917 0 1.699-.663 1.85-1.542l.178-2.058c.09-.44.344-.84.69-1.14l1.9-1.75c.534-.433 1.28-.324 1.636.244l1.904 3.046c.356.568.97.834 1.636.633a1.875 1.875 0 001.636-1.524V6.75a1.875 1.875 0 00-.928-1.524c-.564-.312-1.28-.102-1.636.46l-1.904 3.046c-.356-.568-1.102-.677-1.636.244l-1.9-1.75c-.346-.3-.6-.7-.69-1.14l-.178-2.058A1.875 1.875 0 0012.922 2.25h-1.844zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" clip-rule="evenodd" />
+              <path fill-rule="evenodd" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.542L9.05 5.85c-.09.44-.344.84-.69 1.14L6.46 8.74c-.534.433-1.28.324-1.636-.243L2.92 5.555c-.356-.568-.97-.834-1.636-.633A1.875 1.875 0 000 6.75v10.5c0 .64.364 1.21.928 1.524.564.312 1.28.102 1.636-.46l1.904-3.046c.356-.568 1.102-.677 1.636-.244l1.9 1.75c.346.3.6.7.69 1.14l.178 2.058c.15.88.932 1.542 1.85 1.542h1.844c.917 0 1.699-.663 1.85-1.542l.178-2.058c.09-.44.344-.84-.69-1.14l1.9-1.75c.534-.433 1.28-.324 1.636.244l1.904 3.046c.356.568.97.834 1.636.633a1.875 1.875 0 001.636-1.524V6.75a1.875 1.875 0 00-.928-1.524c-.564-.312-1.28-.102-1.636.46l-1.904 3.046c-.356-.568-1.102-.677-1.636.244l-1.9-1.75c-.346-.3-.6-.7-.69-1.14l-.178-2.058A1.875 1.875 0 0012.922 2.25h-1.844zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" clip-rule="evenodd" />
             </svg>
         </div>
 
